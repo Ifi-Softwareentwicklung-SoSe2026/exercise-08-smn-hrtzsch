@@ -16,15 +16,41 @@ public sealed class ProgressChangedEventArgs : EventArgs
     public int Percent { get; }
 }
 
+public sealed class StepEventArgs : EventArgs
+{
+    public StepEventArgs(string stepName)
+    {
+        StepName = stepName;
+    }
+
+    public string StepName { get; }
+}
+
+public sealed class ProcessCompletedEventArgs : EventArgs
+{
+    public ProcessCompletedEventArgs(int stepCount)
+    {
+        StepCount = stepCount;
+    }
+
+    public int StepCount { get; }
+}
+
 internal sealed class ProcessRunner
 {
+    public event EventHandler<StepEventArgs>? StepStarted;
+
     public event EventHandler<ProgressChangedEventArgs>? ProgressChanged;
+
+    public event EventHandler<StepEventArgs>? StepCompleted;
+
+    public event EventHandler<ProcessCompletedEventArgs>? ProcessCompleted;
 
     public void Run(string[] steps)
     {
         foreach (string step in steps)
         {
-            Console.WriteLine($"Starting: {step}");
+            StepStarted?.Invoke(this, new StepEventArgs(step));
 
             for (int percent = 0; percent <= 100; percent += 5)
             {
@@ -33,11 +59,10 @@ internal sealed class ProcessRunner
                 Thread.Sleep(80);
             }
 
-            Console.WriteLine($"Completed: {step}");
-            Console.WriteLine();
+            StepCompleted?.Invoke(this, new StepEventArgs(step));
         }
 
-        Console.WriteLine("All process steps completed.");
+        ProcessCompleted?.Invoke(this, new ProcessCompletedEventArgs(steps.Length));
     }
 }
 
@@ -60,12 +85,21 @@ internal class Program
         };
 
         var runner = new ProcessRunner();
+        runner.StepStarted += ShowStepStarted;
         runner.ProgressChanged += DrawProgressBar;
         runner.ProgressChanged += ShowHalfwayWarning;
+        runner.ProgressChanged += LogCompletedProgress;
+        runner.StepCompleted += ShowStepCompleted;
+        runner.ProcessCompleted += ShowProcessCompleted;
 
         runner.Run(steps);
 
         Console.CursorVisible = true;
+    }
+
+    private static void ShowStepStarted(object? sender, StepEventArgs e)
+    {
+        Console.WriteLine($"Starting: {e.StepName}");
     }
 
     private static void DrawProgressBar(object? sender, ProgressChangedEventArgs e)
@@ -87,11 +121,30 @@ internal class Program
         }
     }
 
+    private static void ShowStepCompleted(object? sender, StepEventArgs e)
+    {
+        Console.WriteLine($"Completed: {e.StepName}");
+        Console.WriteLine();
+    }
+
     private static void ShowHalfwayWarning(object? sender, ProgressChangedEventArgs e)
     {
         if (e.Percent == 50)
         {
             Console.WriteLine($"  Warning: {e.StepName} is only halfway done.");
         }
+    }
+
+    private static void LogCompletedProgress(object? sender, ProgressChangedEventArgs e)
+    {
+        if (e.Percent == 100)
+        {
+            Console.WriteLine($"  Log: {e.StepName} reached 100%.");
+        }
+    }
+
+    private static void ShowProcessCompleted(object? sender, ProcessCompletedEventArgs e)
+    {
+        Console.WriteLine($"All {e.StepCount} process steps completed.");
     }
 }
