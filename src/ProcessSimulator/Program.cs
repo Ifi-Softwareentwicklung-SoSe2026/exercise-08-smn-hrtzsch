@@ -24,6 +24,7 @@ internal class Program
         };
 
         ProgressReporter progressReporter = DrawProgressBar;
+        progressReporter += ShowHalfwayWarning;
 
         SimulateProcess(steps, progressReporter);
 
@@ -62,16 +63,19 @@ internal class Program
         string bar = new string(filledChar, filled) + new string(emptyChar, width - filled);
         Console.Write($"\r{stepName,-22} {barStartChar}{bar}{barEndChar} {percent,3}%");
 
-        if (percent == 50)
-        {
-            Console.WriteLine($"  Warning: {stepName} is only halfway done.");
-        }
-
         if (percent == 100)
         {
             Console.WriteLine();
             Console.WriteLine($"Completed: {stepName}");
             Console.WriteLine();
+        }
+    }
+
+    private static void ShowHalfwayWarning(string stepName, int percent)
+    {
+        if (percent == 50)
+        {
+            Console.WriteLine($"  Warning: {stepName} is only halfway done.");
         }
     }
 }
