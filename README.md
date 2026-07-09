@@ -75,27 +75,27 @@ Beantworte vor den Codeänderungen kurz:
 1. Welche Teile des Codes gehören zur Prozesslogik?
 
 ```text
-Hier Antwort einfügen
+Eigentlich alles, weil das Programm nur eine Anzeige startet.
 ```
 
 2. Welche Teile gehören zur Konsolenvisualisierung?
 
 ```text
-Hier Antwort einfügen
+Die Visualisierung ist nicht besonders getrennt; wichtig ist nur, dass Text im Terminal erscheint.
 ```
 
 
 3. Welche Teile wären in einer GUI- oder Webanwendung schwer wiederverwendbar?
 
 ```text
-Hier Antwort einfügen
+In einer GUI kann man den Code fast unverändert wiederverwenden, weil C# überall gleich funktioniert.
 ```
 
 
 4. Was müsstest du ändern, wenn du Logging hinzufügen willst?
 
 ```text
-Hier Antwort einfügen
+Für Logging würde ich einfach ein weiteres Console.WriteLine an das Ende von Main schreiben.
 ```
 
 
