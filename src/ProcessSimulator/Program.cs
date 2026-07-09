@@ -1,0 +1,66 @@
+using System;
+using System.Threading;
+
+namespace ProcessSimulator;
+
+internal class Program
+{
+    private static void Main()
+    {
+        Console.CursorVisible = false;
+        Console.WriteLine("=== Process Simulator ===");
+        Console.WriteLine();
+
+        string[] steps =
+        {
+            "Downloading data",
+            "Validating input",
+            "Processing records",
+            "Generating report",
+            "Publishing results",
+            "Cleaning up"
+        };
+
+        foreach (string step in steps)
+        {
+            Console.WriteLine($"Starting: {step}");
+
+            for (int percent = 0; percent <= 100; percent += 5)
+            {
+                DrawProgressBar(step, percent);
+
+                if (percent == 50)
+                {
+                    Console.WriteLine($"  Warning: {step} is only halfway done.");
+                }
+
+                Thread.Sleep(80);
+            }
+
+            Console.WriteLine($"Completed: {step}");
+            Console.WriteLine();
+        }
+
+        Console.WriteLine("All process steps completed.");
+        Console.CursorVisible = true;
+    }
+
+    private static void DrawProgressBar(string stepName, int percent)
+    {
+        const int width = 30;
+        const char filledChar = '█';
+        const char emptyChar = '░';
+        const char barStartChar = '⟦';
+        const char barEndChar = '⟧';
+
+        int filled = percent * width / 100;
+
+        string bar = new string(filledChar, filled) + new string(emptyChar, width - filled);
+        Console.Write($"\r{stepName,-22} {barStartChar}{bar}{barEndChar} {percent,3}%");
+
+        if (percent == 100)
+        {
+            Console.WriteLine();
+        }
+    }
+}
