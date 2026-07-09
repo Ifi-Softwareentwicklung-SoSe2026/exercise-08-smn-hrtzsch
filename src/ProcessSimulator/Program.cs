@@ -3,7 +3,43 @@ using System.Threading;
 
 namespace ProcessSimulator;
 
-public delegate void ProgressReporter(string stepName, int percent);
+public sealed class ProgressChangedEventArgs : EventArgs
+{
+    public ProgressChangedEventArgs(string stepName, int percent)
+    {
+        StepName = stepName;
+        Percent = percent;
+    }
+
+    public string StepName { get; }
+
+    public int Percent { get; }
+}
+
+internal sealed class ProcessRunner
+{
+    public event EventHandler<ProgressChangedEventArgs>? ProgressChanged;
+
+    public void Run(string[] steps)
+    {
+        foreach (string step in steps)
+        {
+            Console.WriteLine($"Starting: {step}");
+
+            for (int percent = 0; percent <= 100; percent += 5)
+            {
+                ProgressChanged?.Invoke(this, new ProgressChangedEventArgs(step, percent));
+
+                Thread.Sleep(80);
+            }
+
+            Console.WriteLine($"Completed: {step}");
+            Console.WriteLine();
+        }
+
+        Console.WriteLine("All process steps completed.");
+    }
+}
 
 internal class Program
 {
@@ -23,59 +59,39 @@ internal class Program
             "Cleaning up"
         };
 
-        ProgressReporter progressReporter = DrawProgressBar;
-        progressReporter += ShowHalfwayWarning;
+        var runner = new ProcessRunner();
+        runner.ProgressChanged += DrawProgressBar;
+        runner.ProgressChanged += ShowHalfwayWarning;
 
-        SimulateProcess(steps, progressReporter);
+        runner.Run(steps);
 
-        Console.WriteLine("All process steps completed.");
         Console.CursorVisible = true;
     }
 
-    private static void SimulateProcess(string[] steps, ProgressReporter progressReporter)
+    private static void DrawProgressBar(object? sender, ProgressChangedEventArgs e)
     {
-        foreach (string step in steps)
-        {
-            for (int percent = 0; percent <= 100; percent += 5)
-            {
-                progressReporter(step, percent);
-
-                Thread.Sleep(80);
-            }
-        }
-    }
-
-    private static void DrawProgressBar(string stepName, int percent)
-    {
-        if (percent == 0)
-        {
-            Console.WriteLine($"Starting: {stepName}");
-        }
-
         const int width = 30;
         const char filledChar = '█';
         const char emptyChar = '░';
         const char barStartChar = '⟦';
         const char barEndChar = '⟧';
 
-        int filled = percent * width / 100;
+        int filled = e.Percent * width / 100;
 
         string bar = new string(filledChar, filled) + new string(emptyChar, width - filled);
-        Console.Write($"\r{stepName,-22} {barStartChar}{bar}{barEndChar} {percent,3}%");
+        Console.Write($"\r{e.StepName,-22} {barStartChar}{bar}{barEndChar} {e.Percent,3}%");
 
-        if (percent == 100)
+        if (e.Percent == 100)
         {
-            Console.WriteLine();
-            Console.WriteLine($"Completed: {stepName}");
             Console.WriteLine();
         }
     }
 
-    private static void ShowHalfwayWarning(string stepName, int percent)
+    private static void ShowHalfwayWarning(object? sender, ProgressChangedEventArgs e)
     {
-        if (percent == 50)
+        if (e.Percent == 50)
         {
-            Console.WriteLine($"  Warning: {stepName} is only halfway done.");
+            Console.WriteLine($"  Warning: {e.StepName} is only halfway done.");
         }
     }
 }
