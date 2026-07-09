@@ -33,27 +33,22 @@ internal class Program
     {
         foreach (string step in steps)
         {
-            Console.WriteLine($"Starting: {step}");
-
             for (int percent = 0; percent <= 100; percent += 5)
             {
                 progressReporter(step, percent);
 
-                if (percent == 50)
-                {
-                    Console.WriteLine($"  Warning: {step} is only halfway done.");
-                }
-
                 Thread.Sleep(80);
             }
-
-            Console.WriteLine($"Completed: {step}");
-            Console.WriteLine();
         }
     }
 
     private static void DrawProgressBar(string stepName, int percent)
     {
+        if (percent == 0)
+        {
+            Console.WriteLine($"Starting: {stepName}");
+        }
+
         const int width = 30;
         const char filledChar = '█';
         const char emptyChar = '░';
@@ -67,6 +62,8 @@ internal class Program
 
         if (percent == 100)
         {
+            Console.WriteLine();
+            Console.WriteLine($"Completed: {stepName}");
             Console.WriteLine();
         }
     }
