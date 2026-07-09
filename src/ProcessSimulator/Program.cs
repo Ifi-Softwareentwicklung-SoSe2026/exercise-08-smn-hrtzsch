@@ -23,7 +23,10 @@ internal class Program
             "Cleaning up"
         };
 
-        SimulateProcess(steps, DrawProgressBar);
+        ProgressReporter progressReporter = DrawProgressBar;
+        progressReporter += ShowHalfwayWarning;
+
+        SimulateProcess(steps, progressReporter);
 
         Console.WriteLine("All process steps completed.");
         Console.CursorVisible = true;
@@ -65,6 +68,14 @@ internal class Program
             Console.WriteLine();
             Console.WriteLine($"Completed: {stepName}");
             Console.WriteLine();
+        }
+    }
+
+    private static void ShowHalfwayWarning(string stepName, int percent)
+    {
+        if (percent == 50)
+        {
+            Console.WriteLine($"  Warning: {stepName} is only halfway done.");
         }
     }
 }
