@@ -15,7 +15,7 @@ tags: [Sommersemester2026, Softwareentwicklung, Übung08]
 
 -->
 
-[![LiaScript Course](https://raw.githubusercontent.com/LiaScript/LiaScript/master/badges/course.svg)](https://liascript.github.io/course/?https://raw.githubusercontent.com/Ifi-Softwareentwicklung-SoSe2026/exercise_08/refs/heads/main/README.md)
+[![LiaScript Course](https://raw.githubusercontent.com/LiaScript/LiaScript/master/badges/course.svg)](https://liascript.github.io/course/?https://raw.githubusercontent.com/Ifi-Softwareentwicklung-SoSe2026/exercise-08-smn-hrtzsch/refs/heads/main/README.md)
 
 # Aufgabe 08
 
@@ -75,27 +75,27 @@ Beantworte vor den Codeänderungen kurz:
 1. Welche Teile des Codes gehören zur Prozesslogik?
 
 ```text
-Eigentlich alles, weil das Programm nur eine Anzeige startet.
+Zur Prozesslogik gehören die Liste der Prozessschritte, die foreach-Schleife über diese Schritte, die Fortschrittsschleife von 0 bis 100 Prozent und die Entscheidung, wann ein Schritt startet, fortschreitet und abgeschlossen ist. Auch die 50-Prozent-Bedingung ist fachlich eine Prozessreaktion, auch wenn sie aktuell direkt als Konsolentext umgesetzt ist.
 ```
 
 2. Welche Teile gehören zur Konsolenvisualisierung?
 
 ```text
-Die Visualisierung ist nicht besonders getrennt; wichtig ist nur, dass Text im Terminal erscheint.
+Zur Konsolenvisualisierung gehören die Überschrift, die Start-/Completed-Ausgaben, die Fortschrittsbalken in DrawProgressBar, Console.Write/WriteLine, der Wagenrücklauf \r, die Balkenzeichen und Console.CursorVisible. Diese Teile beschreiben, wie der Prozess im Terminal dargestellt wird, nicht welchen Fortschritt der Prozess hat.
 ```
 
 
 3. Welche Teile wären in einer GUI- oder Webanwendung schwer wiederverwendbar?
 
 ```text
-In einer GUI kann man den Code fast unverändert wiederverwenden, weil C# überall gleich funktioniert.
+Schwer wiederverwendbar wären alle direkten Console-Aufrufe und DrawProgressBar, weil eine GUI oder Webanwendung nicht in dieselbe Konsole schreibt. Auch die Warnung bei 50 Prozent ist problematisch, weil sie direkt in der Simulationsschleife per Console.WriteLine ausgegeben wird. Für GUI/Web müsste die Prozesslogik den Fortschritt nur melden, während die Oberfläche selbst entscheidet, wie sie ihn anzeigt.
 ```
 
 
 4. Was müsstest du ändern, wenn du Logging hinzufügen willst?
 
 ```text
-Für Logging würde ich einfach ein weiteres Console.WriteLine an das Ende von Main schreiben.
+Aktuell müsste ich Logging direkt in Main oder in die Fortschrittsschleife einbauen, z. B. neben DrawProgressBar oder bei Start/Completed. Das würde die Kopplung weiter erhöhen. Sauberer wäre, wenn die Prozesslogik Fortschrittsereignisse oder Callbacks meldet und ein separater Logger darauf reagiert, ohne die Simulation selbst zu verändern.
 ```
 
 
