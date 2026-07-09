@@ -3,6 +3,8 @@ using System.Threading;
 
 namespace ProcessSimulator;
 
+public delegate void ProgressReporter(string stepName, int percent);
+
 internal class Program
 {
     private static void Main()
@@ -21,13 +23,21 @@ internal class Program
             "Cleaning up"
         };
 
+        SimulateProcess(steps, DrawProgressBar);
+
+        Console.WriteLine("All process steps completed.");
+        Console.CursorVisible = true;
+    }
+
+    private static void SimulateProcess(string[] steps, ProgressReporter progressReporter)
+    {
         foreach (string step in steps)
         {
             Console.WriteLine($"Starting: {step}");
 
             for (int percent = 0; percent <= 100; percent += 5)
             {
-                DrawProgressBar(step, percent);
+                progressReporter(step, percent);
 
                 if (percent == 50)
                 {
@@ -40,9 +50,6 @@ internal class Program
             Console.WriteLine($"Completed: {step}");
             Console.WriteLine();
         }
-
-        Console.WriteLine("All process steps completed.");
-        Console.CursorVisible = true;
     }
 
     private static void DrawProgressBar(string stepName, int percent)
