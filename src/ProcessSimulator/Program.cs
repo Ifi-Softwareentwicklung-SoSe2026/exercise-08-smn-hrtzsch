@@ -26,23 +26,11 @@ internal class Program
         ProgressReporter progressReporter = DrawProgressBar;
         progressReporter += ShowHalfwayWarning;
 
-        SimulateProcess(steps, progressReporter);
+        var runner = new ProcessRunner(steps);
+        runner.Run(progressReporter);
 
         Console.WriteLine("All process steps completed.");
         Console.CursorVisible = true;
-    }
-
-    private static void SimulateProcess(string[] steps, ProgressReporter progressReporter)
-    {
-        foreach (string step in steps)
-        {
-            for (int percent = 0; percent <= 100; percent += 5)
-            {
-                progressReporter(step, percent);
-
-                Thread.Sleep(80);
-            }
-        }
     }
 
     private static void DrawProgressBar(string stepName, int percent)
@@ -80,5 +68,28 @@ internal class Program
 
         Console.WriteLine();
         Console.WriteLine($"Warning: {stepName} is only halfway done.");
+    }
+}
+
+internal sealed class ProcessRunner
+{
+    private readonly string[] _steps;
+
+    public ProcessRunner(string[] steps)
+    {
+        _steps = steps;
+    }
+
+    public void Run(ProgressReporter progressReporter)
+    {
+        foreach (string step in _steps)
+        {
+            for (int percent = 0; percent <= 100; percent += 5)
+            {
+                progressReporter(step, percent);
+
+                Thread.Sleep(80);
+            }
+        }
     }
 }
