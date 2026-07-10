@@ -60,6 +60,12 @@ internal class Program
         string bar = new string(filledChar, filled) + new string(emptyChar, width - filled);
         Console.Write($"\r{stepName,-22} {barStartChar}{bar}{barEndChar} {percent,3}%");
 
+        if (percent == 50)
+        {
+            Console.WriteLine();
+            Console.WriteLine($"Warning: {stepName} is only halfway done.");
+        }
+
         if (percent == 100)
         {
             Console.WriteLine();
