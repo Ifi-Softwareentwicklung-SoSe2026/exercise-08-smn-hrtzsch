@@ -75,27 +75,27 @@ Beantworte vor den Codeänderungen kurz:
 1. Welche Teile des Codes gehören zur Prozesslogik?
 
 ```text
-Alles in Main ist Prozesslogik.
+Zur Prozesslogik gehören die Liste der Prozessschritte, die foreach-Schleife über diese Schritte, die Fortschrittsschleife von 0 bis 100 Prozent und die Entscheidung, wann ein Schritt startet, fortschreitet und abgeschlossen ist. Auch die 50-Prozent-Bedingung ist fachlich eine Prozessreaktion, auch wenn sie aktuell direkt als Konsolentext umgesetzt ist.
 ```
 
 2. Welche Teile gehören zur Konsolenvisualisierung?
 
 ```text
-Nur die Fortschrittsbalken sind Konsolenvisualisierung.
+Zur Konsolenvisualisierung gehören die Überschrift, die Start- und Completed-Ausgaben, die Fortschrittsbalken in DrawProgressBar, Console.Write/WriteLine, der Wagenrücklauf \r, die Balkenzeichen und Console.CursorVisible. Diese Teile beschreiben, wie der Prozess im Terminal dargestellt wird, nicht welchen Fortschritt der Prozess hat.
 ```
 
 
 3. Welche Teile wären in einer GUI- oder Webanwendung schwer wiederverwendbar?
 
 ```text
-In GUI oder Web wäre eigentlich alles wiederverwendbar.
+Schwer wiederverwendbar wären alle direkten Console-Aufrufe und DrawProgressBar, weil eine GUI oder Webanwendung nicht in dieselbe Konsole schreibt. Auch die Warnung bei 50 Prozent ist problematisch, weil sie direkt in der Simulationsschleife per Console.WriteLine ausgegeben wird. Für GUI/Web müsste die Prozesslogik den Fortschritt nur melden, während die Oberfläche selbst entscheidet, wie sie ihn anzeigt.
 ```
 
 
 4. Was müsstest du ändern, wenn du Logging hinzufügen willst?
 
 ```text
-Ich würde einfach überall Console.WriteLine ergänzen.
+Aktuell müsste ich Logging direkt in Main oder in die Fortschrittsschleife einbauen, z. B. neben DrawProgressBar oder bei Start/Completed. Das würde die Kopplung weiter erhöhen. Sauberer wäre, wenn die Prozesslogik Fortschrittsereignisse oder Callbacks meldet und ein separater Logger darauf reagiert, ohne die Simulation selbst zu verändern.
 ```
 
 
